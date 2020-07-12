@@ -1,6 +1,8 @@
 # Data-Science-Visualization-Project
 The repository created for Data Science Visualization Project, to keep version control.
 
+The code has been verified and tested, Master branch is updated with code now. The final instructions to run the code can be seen below.
+
 Before running the script, Download the pre-processed data file. 
 It contains:
 LatScaled.mat      - the latitude locations for the data grid, scaled appropriately in a single vector.
