@@ -1,0 +1,98 @@
+clear all
+clc
+
+[X] = 30.05:0.1:69.95; % create X value
+[Y] = -24.95:0.1:44.95;% create Y values
+[X,Y] = meshgrid(X, Y);
+
+    %% Create a display of the Map of Europe
+    
+    
+    figure(2);
+    clf
+    % Create the map
+    worldmap('Europe'); % set the part of the earth to show
+    
+    load coastlines
+    plotm(coastlat,coastlon)
+    
+    land = shaperead('landareas', 'UseGeoCoords', true);
+    geoshow(gca, land, 'FaceColor', [0.5 0.7 0.5])
+    
+    lakes = shaperead('worldlakes', 'UseGeoCoords', true);
+    geoshow(lakes, 'FaceColor', 'blue')
+    
+    rivers = shaperead('worldrivers', 'UseGeoCoords', true);
+    geoshow(rivers, 'Color', 'blue')
+    
+    cities = shaperead('worldcities', 'UseGeoCoords', true);
+    geoshow(cities, 'Marker', '.', 'Color', 'red')
+close all;
+
+% Note: I have not used 24Hour data file because it has array size of 398x698. Whereas,the latitude and longitude
+% of Europe make an array of 400x700. o3Scaled.mat file contains ozone values from all 7 models,
+% for all 400x700 locations
+% and for 25 hours. That is why this file has been used for visualization.
+
+load('o3Scaled.mat')
+pic=figure;
+axis tight manual % this ensures that getframe() returns a consistent size
+ax = gca;
+set(gcf, 'Units', 'Normalized', 'OuterPosition', [0 0 1 1]);
+filename = 'OzoneHour.gif';
+for p = 1:1:24
+%     There are 7 models, I have used randomly 3rd model. You can use any
+%     model by changing index number from 3 to any of your desired number.
+%     p corresponds to hour number
+    Z = double(squeeze(O3Scaled(3,:,:,p)));
+    
+    clf
+    
+    % create the map
+    h=worldmap('Europe'); % set the part of the earth to show
+    drawnow
+    h.FontSizeMode='manual';
+    setm(h, 'fontSize', 14)
+    setm(h, 'FontWeight', 'bold')
+    t=title(['Ozone Level at ',num2str(p),' hour']);
+    set(t,'position',get(t,'position')+[0 1.4 0])
+    t.FontSize = 14;
+    t.FontWeight = 'bold';
+    load coastlines
+    plotm(coastlat,coastlon)
+    land = shaperead('landareas', 'UseGeoCoords', true);
+    geoshow(gca, land, 'FaceColor', [0.5 0.7 0.5])
+    lakes = shaperead('worldlakes', 'UseGeoCoords', true);
+    geoshow(lakes, 'FaceColor', 'blue')
+    rivers = shaperead('worldrivers', 'UseGeoCoords', true);
+    geoshow(rivers, 'Color', 'blue')
+    cities = shaperead('worldcities', 'UseGeoCoords', true);
+    geoshow(cities, 'Marker', '.', 'Color', 'red')
+
+    % display the data
+    NumContours = 10;
+    contourfm(X, Y, Z, NumContours)
+    Plots = findobj(gca,'Type','Axes');
+    Plots.SortMethod = 'depth';
+    
+    % Add colorbar
+    cb=colorbar;
+    caxis([0, 1]);
+    pos=get(cb,'Position');
+    set(cb,'Position',pos+[0.12,0.05,0,0]);
+    cb.FontSize = 14;
+    cb.FontWeight = 'bold';
+    
+    % Capture the plot as an image
+    frame = getframe(pic);
+    im = frame2im(frame);
+    [imind,cm] = rgb2ind(im,256);
+    
+    % Write to the GIF File
+    if p == 1
+        imwrite(imind,cm,filename,'gif', 'Loopcount',inf);
+    else
+        imwrite(imind,cm,filename,'gif','WriteMode','append');
+    end
+    
+end
