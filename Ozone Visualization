@@ -1,0 +1,30 @@
+clear all
+clc
+
+[X] = 30.05:0.1:69.95; % create X value
+[Y] = -24.95:0.1:44.95;% create Y values
+[X,Y] = meshgrid(X, Y);
+
+    %% Create a display of the Map of Europe
+    
+    
+    figure(2);
+    clf
+    % Create the map
+    worldmap('Europe'); % set the part of the earth to show
+    
+    load coastlines
+    plotm(coastlat,coastlon)
+    
+    land = shaperead('landareas', 'UseGeoCoords', true);
+    geoshow(gca, land, 'FaceColor', [0.5 0.7 0.5])
+    
+    lakes = shaperead('worldlakes', 'UseGeoCoords', true);
+    geoshow(lakes, 'FaceColor', 'blue')
+    
+    rivers = shaperead('worldrivers', 'UseGeoCoords', true);
+    geoshow(rivers, 'Color', 'blue')
+    
+    cities = shaperead('worldcities', 'UseGeoCoords', true);
+    geoshow(cities, 'Marker', '.', 'Color', 'red')
+close all;
