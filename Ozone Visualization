@@ -28,3 +28,19 @@ clc
     cities = shaperead('worldcities', 'UseGeoCoords', true);
     geoshow(cities, 'Marker', '.', 'Color', 'red')
 close all;
+
+
+load('o3Scaled.mat')
+pic=figure;
+axis tight manual % this ensures that getframe() returns a consistent size
+ax = gca;
+set(gcf, 'Units', 'Normalized', 'OuterPosition', [0 0 1 1]);
+filename = 'OzoneHour.gif';
+for p = 1:1:24
+%     There are 7 models, I have used randomly 3rd model. You can use any
+%     model by changing index number from 3 to any of your desired number.
+%     p corresponds to hour number
+    Z = double(squeeze(O3Scaled(3,:,:,p)));
+    
+    clf
+
